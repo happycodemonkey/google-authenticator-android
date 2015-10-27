@@ -53,12 +53,6 @@ public class EnterKeyActivity extends WizardPageActivity<Serializable> implement
     // Find all the views on the page
     mKeyEntryField = (EditText) findViewById(R.id.key_value);
     mAccountName = (EditText) findViewById(R.id.account_name);
-    mType = (Spinner) findViewById(R.id.type_choice);
-
-    ArrayAdapter<CharSequence> types = ArrayAdapter.createFromResource(this,
-        R.array.type, android.R.layout.simple_spinner_item);
-    types.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    mType.setAdapter(types);
 
     // Set listeners
     mKeyEntryField.addTextChangedListener(this);
@@ -101,9 +95,7 @@ public class EnterKeyActivity extends WizardPageActivity<Serializable> implement
   protected void onRightButtonPressed() {
     // TODO(cemp): This depends on the OtpType enumeration to correspond
     // to array indices for the dropdown with different OTP modes.
-    OtpType mode = mType.getSelectedItemPosition() == OtpType.TOTP.value ?
-                   OtpType.TOTP :
-                   OtpType.HOTP;
+    OtpType mode = OtpType.TOTP;
     if (validateKeyAndUpdateStatus(true)) {
       AuthenticatorActivity.saveSecret(this,
           mAccountName.getText().toString(),

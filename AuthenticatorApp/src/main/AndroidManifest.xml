@@ -18,7 +18,7 @@
           package="com.google.android.apps.authenticator2"
           android:versionCode="21" android:versionName="2.21">
 
-  <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14" />
+  <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="18" />
 
   <uses-permission android:name="android.permission.VIBRATE" />
   <uses-permission android:name="android.permission.INTERNET" />
@@ -48,10 +48,7 @@
       </intent-filter>
     </activity>
 
-    <activity android:name="com.google.android.apps.authenticator.SettingsAboutActivity"
-              android:label="@string/about_preference_screen_title" />
-
-    <activity android:name="com.google.android.apps.authenticator.AddOtherAccountActivity"
+      <activity android:name="com.google.android.apps.authenticator.AddOtherAccountActivity"
               android:label="@string/add_account_menu_item" />
 
     <activity android:name="com.google.android.apps.authenticator.EnterKeyActivity"
@@ -60,10 +57,7 @@
     <activity android:name="com.google.android.apps.authenticator.CheckCodeActivity"
               android:label="@string/check_code_title" />
 
-    <activity android:name="com.google.android.apps.authenticator.SettingsActivity"
-              android:label="@string/main_preference_screen_title" />
-
-    <activity android:name="com.google.android.apps.authenticator.howitworks.IntroEnterPasswordActivity"
+      <activity android:name="com.google.android.apps.authenticator.howitworks.IntroEnterPasswordActivity"
               android:theme="@style/AuthenticatorTheme.NoTitleBar"
               android:label="@string/howitworks_page_enter_password_title" />
     <activity android:name="com.google.android.apps.authenticator.howitworks.IntroEnterCodeActivity"

@@ -33,6 +33,11 @@ import android.test.RenamingDelegatingContext;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ClientConnectionManager;
 
+/** TODO
+ *
+ * Determine if I need to re-add the HttpURLConnection stuff into here. I assume it was for threading purposes but I have to look into it.
+ */
+
 
 /**
  * Dependency injector that decouples the clients of various objects from their
@@ -59,7 +64,6 @@ public final class DependencyInjector {
   private static TotpClock sTotpClock;
   private static PackageManager sPackageManager;
   private static StartActivityListener sStartActivityListener;
-  private static HttpClient sHttpClient;
   private static ImportController sImportController;
   private static OptionalFeatures sOptionalFeatures;
 
@@ -185,21 +189,6 @@ public final class DependencyInjector {
     return sImportController;
   }
 
-  /**
-   * Sets the {@link HttpClient} instance returned by this injector. This will prevent the
-   * injector from creating its own instance.
-   */
-  public static synchronized void setHttpClient(HttpClient httpClient) {
-    sHttpClient = httpClient;
-  }
-
-  public static synchronized HttpClient getHttpClient() {
-    if (sHttpClient == null) {
-      sHttpClient = HttpClientFactory.createHttpClient(getContext());
-    }
-    return sHttpClient;
-  }
-
   public static synchronized void setOptionalFeatures(OptionalFeatures optionalFeatures) {
     sOptionalFeatures = optionalFeatures;
   }
@@ -262,12 +251,6 @@ public final class DependencyInjector {
     if (sAccountDb != null) {
       sAccountDb.close();
     }
-    if (sHttpClient != null) {
-      ClientConnectionManager httpClientConnectionManager = sHttpClient.getConnectionManager();
-      if (httpClientConnectionManager != null) {
-        httpClientConnectionManager.shutdown();
-      }
-    }
 
     sMode = null;
     sContext = null;
@@ -276,7 +259,6 @@ public final class DependencyInjector {
     sTotpClock = null;
     sPackageManager = null;
     sStartActivityListener = null;
-    sHttpClient = null;
     sImportController = null;
     sOptionalFeatures = null;
   }

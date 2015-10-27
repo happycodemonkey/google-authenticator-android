@@ -47,17 +47,22 @@ public class SyncNowActivity extends Activity implements SyncNowController.Prese
 
   private Dialog mProgressDialog;
 
+    /**
+     * TODO I have literally no idea if I should replace this with something.
+     *
+     */
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    if (getLastNonConfigurationInstance() != null) {
-      mController = (SyncNowController) getLastNonConfigurationInstance();
-    } else {
+    //if (getLastNonConfigurationInstance() != null) {
+    //  mController = (SyncNowController) getLastNonConfigurationInstance();
+    //} else {
       mController = new SyncNowController(
           DependencyInjector.getTotpClock(),
-          new NetworkTimeProvider(DependencyInjector.getHttpClient()));
-    }
+          new NetworkTimeProvider());
+    //}
 
     mController.attach(this);
   }
@@ -70,10 +75,10 @@ public class SyncNowActivity extends Activity implements SyncNowController.Prese
     super.onStop();
   }
 
-  @Override
-  public Object onRetainNonConfigurationInstance() {
-    return mController;
-  }
+  //@Override
+ // public Object onRetainNonConfigurationInstance() {
+  //  return mController;
+  //}
 
   @Override
   public void onBackPressed() {

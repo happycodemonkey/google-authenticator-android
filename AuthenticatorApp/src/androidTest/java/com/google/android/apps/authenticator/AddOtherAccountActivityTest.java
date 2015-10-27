@@ -32,7 +32,7 @@ public class AddOtherAccountActivityTest
     extends ActivityInstrumentationTestCase2<AddOtherAccountActivity> {
 
   public AddOtherAccountActivityTest() {
-    super(TestUtilities.APP_PACKAGE_NAME, AddOtherAccountActivity.class);
+    super(AddOtherAccountActivity.class);
   }
 
   @Override

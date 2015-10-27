@@ -49,7 +49,7 @@ public class EnterKeyActivityTest extends ActivityInstrumentationTestCase2<Enter
   private AccountDb mAccountDb;
 
   public EnterKeyActivityTest() {
-    super(TestUtilities.APP_PACKAGE_NAME, EnterKeyActivity.class);
+    super(EnterKeyActivity.class);
   }
 
   @Override

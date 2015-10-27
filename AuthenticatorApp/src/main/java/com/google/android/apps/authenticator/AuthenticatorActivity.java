@@ -18,7 +18,6 @@ package com.google.android.apps.authenticator;
 
 import com.google.android.apps.authenticator.AccountDb.OtpType;
 import com.google.android.apps.authenticator.dataimport.ImportController;
-import com.google.android.apps.authenticator.howitworks.IntroEnterPasswordActivity;
 import com.google.android.apps.authenticator.testability.DependencyInjector;
 import com.google.android.apps.authenticator.testability.TestableActivity;
 import com.google.android.apps.authenticator2.R;
@@ -26,7 +25,10 @@ import com.google.android.apps.authenticator2.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,7 +39,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.text.ClipboardManager;
+import android.content.ClipboardManager;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -94,7 +96,7 @@ public class AuthenticatorActivity extends TestableActivity {
   private static final long HOTP_DISPLAY_TIMEOUT = 2 * 60 * 1000;
 
   // @VisibleForTesting
-  static final int DIALOG_ID_UNINSTALL_OLD_APP = 12;
+  //static final int DIALOG_ID_UNINSTALL_OLD_APP = 12;
 
   // @VisibleForTesting
   static final int DIALOG_ID_SAVE_KEY = 13;
@@ -139,7 +141,7 @@ public class AuthenticatorActivity extends TestableActivity {
    * Key under which the {@link #mOldAppUninstallIntent} is stored in the instance state
    * {@link Bundle}.
    */
-  private static final String KEY_OLD_APP_UNINSTALL_INTENT = "oldAppUninstallIntent";
+  //private static final String KEY_OLD_APP_UNINSTALL_INTENT = "oldAppUninstallIntent";
 
   /**
    * {@link Intent} for uninstalling the "old" app or {@code null} if not known/available.
@@ -149,7 +151,7 @@ public class AuthenticatorActivity extends TestableActivity {
    * error-prone mechanism because showDialog on Eclair doesn't take parameters. Once Froyo is
    * the minimum targetted SDK, this contrived code can be removed.
    */
-  private Intent mOldAppUninstallIntent;
+  //private Intent mOldAppUninstallIntent;
 
   /** Whether the importing of data from the "old" app has been started and has not yet finished. */
   private boolean mDataImportInProgress;
@@ -210,19 +212,20 @@ public class AuthenticatorActivity extends TestableActivity {
     setContentView(R.layout.main);
 
     // restore state on screen rotation
-    Object savedState = getLastNonConfigurationInstance();
-    if (savedState != null) {
-      mUsers = (PinInfo[]) savedState;
+   // Object savedState = getLastNonConfigurationInstance();
+
+   // if (savedState != null) {
+     // mUsers = (PinInfo[]) savedState;
       // Re-enable the Get Code buttons on all HOTP accounts, otherwise they'll stay disabled.
       for (PinInfo account : mUsers) {
         if (account.isHotp) {
           account.hotpCodeGenerationAllowed = true;
         }
       }
-    }
+    //}
 
     if (savedInstanceState != null) {
-      mOldAppUninstallIntent = savedInstanceState.getParcelable(KEY_OLD_APP_UNINSTALL_INTENT);
+      //mOldAppUninstallIntent = savedInstanceState.getParcelable(KEY_OLD_APP_UNINSTALL_INTENT);
       mSaveKeyDialogParams =
           (SaveKeyDialogParams) savedInstanceState.getSerializable(KEY_SAVE_KEY_DIALOG_PARAMS);
     }
@@ -232,16 +235,7 @@ public class AuthenticatorActivity extends TestableActivity {
     mContentAccountsPresent = findViewById(R.id.content_accounts_present);
     mContentNoAccounts.setVisibility((mUsers.length > 0) ? View.GONE : View.VISIBLE);
     mContentAccountsPresent.setVisibility((mUsers.length > 0) ? View.VISIBLE : View.GONE);
-    TextView noAccountsPromptDetails = (TextView) findViewById(R.id.details);
-    noAccountsPromptDetails.setText(
-        Html.fromHtml(getString(R.string.welcome_page_details)));
 
-    findViewById(R.id.how_it_works_button).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        displayHowItWorksInstructions();
-      }
-    });
     findViewById(R.id.add_account_button).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -271,7 +265,7 @@ public class AuthenticatorActivity extends TestableActivity {
       // This is the first time this Activity is starting (i.e., not restoring previous state which
       // was saved, for example, due to orientation change)
       DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreated(this);
-      importDataFromOldAppIfNecessary();
+      //importDataFromOldAppIfNecessary();
       handleIntent(getIntent());
     }
   }
@@ -302,14 +296,16 @@ public class AuthenticatorActivity extends TestableActivity {
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
 
-    outState.putParcelable(KEY_OLD_APP_UNINSTALL_INTENT, mOldAppUninstallIntent);
+    //outState.putParcelable(KEY_OLD_APP_UNINSTALL_INTENT, mOldAppUninstallIntent);
     outState.putSerializable(KEY_SAVE_KEY_DIALOG_PARAMS, mSaveKeyDialogParams);
   }
 
+  /**
   @Override
   public Object onRetainNonConfigurationInstance() {
     return mUsers;  // save state of users and currently displayed PINs
   }
+  **/
 
   // Because this activity is marked as singleTop, new launch intents will be
   // delivered via this API instead of onResume().
@@ -332,7 +328,7 @@ public class AuthenticatorActivity extends TestableActivity {
     super.onResume();
     Log.i(getString(R.string.app_name), LOCAL_TAG + ": onResume");
 
-    importDataFromOldAppIfNecessary();
+    //importDataFromOldAppIfNecessary();
   }
 
   @Override
@@ -389,7 +385,7 @@ public class AuthenticatorActivity extends TestableActivity {
 
   private void setTotpCountdownPhaseFromTimeTillNextValue(long millisRemaining) {
     setTotpCountdownPhase(
-        ((double) millisRemaining) / Utilities.secondsToMillis(mTotpCounter.getTimeStep()));
+            ((double) millisRemaining) / Utilities.secondsToMillis(mTotpCounter.getTimeStep()));
   }
 
   private void refreshVerificationCodes() {
@@ -518,7 +514,10 @@ public class AuthenticatorActivity extends TestableActivity {
 
     if (!OTP_SCHEME.equals(scheme)) {
       Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid or missing scheme in uri");
-      showDialog(Utilities.INVALID_QR_CODE);
+      //showDialog(Utilities.INVALID_QR_CODE);
+      FragmentManager fm = getFragmentManager();
+      Dialogs d = Dialogs.newInstance(Utilities.INVALID_QR_CODE);
+      d.show(fm, "fragment_invalid_code");
       return;
     }
 
@@ -533,7 +532,10 @@ public class AuthenticatorActivity extends TestableActivity {
           counter = Integer.parseInt(counterParameter);
         } catch (NumberFormatException e) {
           Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid counter in uri");
-          showDialog(Utilities.INVALID_QR_CODE);
+          //showDialog(Utilities.INVALID_QR_CODE);
+          FragmentManager fm = getFragmentManager();
+          Dialogs d = Dialogs.newInstance(Utilities.INVALID_QR_CODE);
+          d.show(fm, "fragment_invalid_code");
           return;
         }
       } else {
@@ -541,14 +543,20 @@ public class AuthenticatorActivity extends TestableActivity {
       }
     } else {
       Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid or missing authority in uri");
-      showDialog(Utilities.INVALID_QR_CODE);
+      //showDialog(Utilities.INVALID_QR_CODE);
+      FragmentManager fm = getFragmentManager();
+      Dialogs d = Dialogs.newInstance(Utilities.INVALID_QR_CODE);
+      d.show(fm, "fragment_invalid_code");
       return;
     }
 
     user = validateAndGetUserInPath(path);
     if (user == null) {
       Log.e(getString(R.string.app_name), LOCAL_TAG + ": Missing user id in uri");
-      showDialog(Utilities.INVALID_QR_CODE);
+      //showDialog(Utilities.INVALID_QR_CODE);
+      FragmentManager fm = getFragmentManager();
+      Dialogs d = Dialogs.newInstance(Utilities.INVALID_QR_CODE);
+      d.show(fm, "fragment_invalid_code");
       return;
     }
 
@@ -556,14 +564,20 @@ public class AuthenticatorActivity extends TestableActivity {
 
     if (secret == null || secret.length() == 0) {
       Log.e(getString(R.string.app_name), LOCAL_TAG +
-          ": Secret key not found in URI");
-      showDialog(Utilities.INVALID_SECRET_IN_QR_CODE);
+              ": Secret key not found in URI");
+      //showDialog(Utilities.INVALID_SECRET_IN_QR_CODE);
+      FragmentManager fm = getFragmentManager();
+      Dialogs d = Dialogs.newInstance(Utilities.INVALID_SECRET_IN_QR_CODE);
+      d.show(fm, "fragment_invalid_secret");
       return;
     }
 
     if (AccountDb.getSigningOracle(secret) == null) {
       Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid secret key");
-      showDialog(Utilities.INVALID_SECRET_IN_QR_CODE);
+      //showDialog(Utilities.INVALID_SECRET_IN_QR_CODE);
+      FragmentManager fm = getFragmentManager();
+      Dialogs d = Dialogs.newInstance(Utilities.INVALID_SECRET_IN_QR_CODE);
+      d.show(fm, "fragment_invalid_secret");
       return;
     }
 
@@ -575,7 +589,10 @@ public class AuthenticatorActivity extends TestableActivity {
 
     if (confirmBeforeSave) {
       mSaveKeyDialogParams = new SaveKeyDialogParams(user, secret, type, counter);
-      showDialog(DIALOG_ID_SAVE_KEY);
+      //showDialog(DIALOG_ID_SAVE_KEY);
+      FragmentManager fm = getFragmentManager();
+      Dialogs d = Dialogs.newInstance(DIALOG_ID_SAVE_KEY);
+      d.show(fm, "fragment_save_key");
     } else {
       saveSecretAndRefreshUserList(user, secret, null, type, counter);
     }
@@ -674,7 +691,7 @@ public class AuthenticatorActivity extends TestableActivity {
       case COPY_TO_CLIPBOARD_ID:
         ClipboardManager clipboard =
           (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        clipboard.setText(mUsers[(int) info.id].pin);
+        clipboard.setPrimaryClip(ClipData.newPlainText("", mUsers[(int) info.id].pin));
         return true;
       case CHECK_KEY_VALUE_ID:
         intent = new Intent(Intent.ACTION_VIEW);
@@ -763,14 +780,12 @@ public class AuthenticatorActivity extends TestableActivity {
     return true;
   }
 
+  /** TODO removing this for now, add a "help" thing with link to ticket system
   @Override
   public boolean onMenuItemSelected(int featureId, MenuItem item) {
     switch (item.getItemId()) {
       case R.id.add_account:
         addAccount();
-        return true;
-      case R.id.how_it_works:
-        displayHowItWorksInstructions();
         return true;
       case R.id.settings:
         showSettings();
@@ -779,6 +794,7 @@ public class AuthenticatorActivity extends TestableActivity {
 
     return super.onMenuItemSelected(featureId, item);
   }
+   **/
 
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -789,10 +805,6 @@ public class AuthenticatorActivity extends TestableActivity {
       Uri uri = (scanResult != null) ? Uri.parse(scanResult) : null;
       interpretScanResult(uri, false);
     }
-  }
-
-  private void displayHowItWorksInstructions() {
-    startActivity(new Intent(this, IntroEnterPasswordActivity.class));
   }
 
   private void addAccount() {
@@ -806,19 +818,16 @@ public class AuthenticatorActivity extends TestableActivity {
     try {
       startActivityForResult(intentScan, SCAN_REQUEST);
     } catch (ActivityNotFoundException error) {
-      showDialog(Utilities.DOWNLOAD_DIALOG);
+      //showDialog(Utilities.DOWNLOAD_DIALOG);
+      FragmentManager fm = getFragmentManager();
+      Dialogs d = Dialogs.newInstance(Utilities.DOWNLOAD_DIALOG);
+      d.show(fm, "fragment_download_dialog");
     }
   }
 
   public static Intent getLaunchIntentActionScanBarcode(Context context) {
     return new Intent(AuthenticatorActivity.ACTION_SCAN_BARCODE)
         .setComponent(new ComponentName(context, AuthenticatorActivity.class));
-  }
-
-  private void showSettings() {
-    Intent intent = new Intent();
-    intent.setClass(this, SettingsActivity.class);
-    startActivity(intent);
   }
 
   /**
@@ -853,7 +862,10 @@ public class AuthenticatorActivity extends TestableActivity {
 
     // Sanity check
     if (scanResult == null) {
-      showDialog(Utilities.INVALID_QR_CODE);
+      //showDialog(Utilities.INVALID_QR_CODE);
+      FragmentManager fm = getFragmentManager();
+      Dialogs d = Dialogs.newInstance(Utilities.INVALID_QR_CODE);
+      d.show(fm, "fragment_invalid_code");
       return;
     }
 
@@ -861,7 +873,10 @@ public class AuthenticatorActivity extends TestableActivity {
     if (OTP_SCHEME.equals(scanResult.getScheme()) && scanResult.getAuthority() != null) {
       parseSecret(scanResult, confirmBeforeSave);
     } else {
-      showDialog(Utilities.INVALID_QR_CODE);
+      //showDialog(Utilities.INVALID_QR_CODE);
+      FragmentManager fm = getFragmentManager();
+      Dialogs d = Dialogs.newInstance(Utilities.INVALID_QR_CODE);
+      d.show(fm, "fragment_invalid_code");
     }
   }
 
@@ -869,143 +884,155 @@ public class AuthenticatorActivity extends TestableActivity {
    * This method is deprecated in SDK level 8, but we have to use it because the
    * new method, which replaces this one, does not exist before SDK level 8
    */
-  @Override
-  protected Dialog onCreateDialog(final int id) {
-    Dialog dialog = null;
-    switch(id) {
-      /**
-       * Prompt to download ZXing from Market. If Market app is not installed,
-       * such as on a development phone, open the HTTPS URI for the ZXing apk.
-       */
-      case Utilities.DOWNLOAD_DIALOG:
-        AlertDialog.Builder dlBuilder = new AlertDialog.Builder(this);
-        dlBuilder.setTitle(R.string.install_dialog_title);
-        dlBuilder.setMessage(R.string.install_dialog_message);
-        dlBuilder.setIcon(android.R.drawable.ic_dialog_alert);
-        dlBuilder.setPositiveButton(R.string.install_button,
-            new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int whichButton) {
-                Intent intent = new Intent(Intent.ACTION_VIEW,
-                                           Uri.parse(Utilities.ZXING_MARKET));
-                try {
-                  startActivity(intent);
-                }
-                catch (ActivityNotFoundException e) { // if no Market app
-                  intent = new Intent(Intent.ACTION_VIEW,
-                                      Uri.parse(Utilities.ZXING_DIRECT));
-                  startActivity(intent);
-                }
-              }
-            }
-        );
-        dlBuilder.setNegativeButton(R.string.cancel, null);
-        dialog = dlBuilder.create();
-        break;
 
-      case DIALOG_ID_SAVE_KEY:
-        final SaveKeyDialogParams saveKeyDialogParams = mSaveKeyDialogParams;
-        dialog = new AlertDialog.Builder(this)
-            .setTitle(R.string.save_key_message)
-            .setMessage(saveKeyDialogParams.user)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .setPositiveButton(R.string.ok,
-                new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int whichButton) {
-                  saveSecretAndRefreshUserList(
-                      saveKeyDialogParams.user,
-                      saveKeyDialogParams.secret,
-                      null,
-                      saveKeyDialogParams.type,
-                      saveKeyDialogParams.counter);
-                }
-              })
-            .setNegativeButton(R.string.cancel, null)
-            .create();
-        // Ensure that whenever this dialog is to be displayed via showDialog, it displays the
-        // correct (latest) user/account name. If this dialog is not explicitly removed after it's
-        // been dismissed, then next time showDialog is invoked, onCreateDialog will not be invoked
-        // and the dialog will display the previous user/account name instead of the current one.
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-          @Override
-          public void onDismiss(DialogInterface dialog) {
-            removeDialog(id);
-            onSaveKeyIntentConfirmationPromptDismissed();
-          }
-        });
-        break;
+  public static class Dialogs extends DialogFragment {
 
-      case Utilities.INVALID_QR_CODE:
-        dialog = createOkAlertDialog(R.string.error_title, R.string.error_qr,
-            android.R.drawable.ic_dialog_alert);
-        markDialogAsResultOfSaveKeyIntent(dialog);
-        break;
+    private SaveKeyDialogParams mSaveKeyDialogParams;
+    private boolean mSaveKeyIntentConfirmationInProgress;
 
-      case Utilities.INVALID_SECRET_IN_QR_CODE:
-        dialog = createOkAlertDialog(
-            R.string.error_title, R.string.error_uri, android.R.drawable.ic_dialog_alert);
-        markDialogAsResultOfSaveKeyIntent(dialog);
-        break;
+    public static Dialogs newInstance(int id) {
+      Dialogs d = new Dialogs();
 
-      case DIALOG_ID_UNINSTALL_OLD_APP:
-        dialog = new AlertDialog.Builder(this)
-            .setTitle(R.string.dataimport_import_succeeded_uninstall_dialog_title)
-            .setMessage(
-                DependencyInjector.getOptionalFeatures().appendDataImportLearnMoreLink(
-                    this,
-                    getString(R.string.dataimport_import_succeeded_uninstall_dialog_prompt)))
-            .setCancelable(true)
-            .setPositiveButton(
-                R.string.button_uninstall_old_app,
-                new DialogInterface.OnClickListener() {
-                  @Override
-                  public void onClick(DialogInterface dialog, int whichButton) {
-                    startActivity(mOldAppUninstallIntent);
-                  }
-                })
-            .setNegativeButton(R.string.cancel, null)
-            .create();
-        break;
+      Bundle args = new Bundle();
+      args.putInt("id", id);
+      d.setArguments(args);
 
-      default:
-        dialog =
-            DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreateDialog(this, id);
-        if (dialog == null) {
-          dialog = super.onCreateDialog(id);
-        }
-        break;
+      return d;
     }
-    return dialog;
-  }
 
-  private void markDialogAsResultOfSaveKeyIntent(Dialog dialog) {
-    dialog.setOnDismissListener(new OnDismissListener() {
-      @Override
-      public void onDismiss(DialogInterface dialog) {
-        onSaveKeyIntentConfirmationPromptDismissed();
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      final int id = getArguments().getInt("id");
+
+      Dialog dialog = null;
+      switch (id) {
+        /**
+         * Prompt to download ZXing from Market. If Market app is not installed,
+         * such as on a development phone, open the HTTPS URI for the ZXing apk.
+         */
+        case Utilities.DOWNLOAD_DIALOG:
+          AlertDialog.Builder dlBuilder = new AlertDialog.Builder(getActivity());
+          dlBuilder.setTitle(R.string.install_dialog_title);
+          dlBuilder.setMessage(R.string.install_dialog_message);
+          dlBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+          dlBuilder.setPositiveButton(R.string.install_button,
+                  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                      Intent intent = new Intent(Intent.ACTION_VIEW,
+                              Uri.parse(Utilities.ZXING_MARKET));
+                      try {
+                        startActivity(intent);
+                      } catch (ActivityNotFoundException e) { // if no Market app
+                        intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse(Utilities.ZXING_DIRECT));
+                        startActivity(intent);
+                      }
+                    }
+                  }
+          );
+          dlBuilder.setNegativeButton(R.string.cancel, null);
+          dialog = dlBuilder.create();
+          break;
+
+        case DIALOG_ID_SAVE_KEY:
+          final SaveKeyDialogParams saveKeyDialogParams = mSaveKeyDialogParams;
+          dialog = new AlertDialog.Builder(getActivity())
+                  .setTitle(R.string.save_key_message)
+                  .setMessage(saveKeyDialogParams.user)
+                  .setIcon(android.R.drawable.ic_dialog_alert)
+                  .setPositiveButton(R.string.ok,
+                          new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                              saveSecretAndRefreshUserList(
+                                      saveKeyDialogParams.user,
+                                      saveKeyDialogParams.secret,
+                                      null,
+                                      saveKeyDialogParams.type,
+                                      saveKeyDialogParams.counter);
+                            }
+                          })
+                  .setNegativeButton(R.string.cancel, null)
+                  .create();
+          // Ensure that whenever this dialog is to be displayed via showDialog, it displays the
+          // correct (latest) user/account name. If this dialog is not explicitly removed after it's
+          // been dismissed, then next time showDialog is invoked, onCreateDialog will not be invoked
+          // and the dialog will display the previous user/account name instead of the current one.
+          dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+              //removeDialog(id);
+              dismiss();
+              onSaveKeyIntentConfirmationPromptDismissed();
+            }
+          });
+          break;
+
+        case Utilities.INVALID_QR_CODE:
+          dialog = createOkAlertDialog(R.string.error_title, R.string.error_qr,
+                  android.R.drawable.ic_dialog_alert);
+          markDialogAsResultOfSaveKeyIntent(dialog);
+          break;
+
+        case Utilities.INVALID_SECRET_IN_QR_CODE:
+          dialog = createOkAlertDialog(
+                  R.string.error_title, R.string.error_uri, android.R.drawable.ic_dialog_alert);
+          markDialogAsResultOfSaveKeyIntent(dialog);
+          break;
+        default:
+          break;
       }
-    });
-  }
 
-  /**
-   * Invoked when a user-visible confirmation prompt for the Intent to add a new account has been
-   * dimissed.
-   */
-  private void onSaveKeyIntentConfirmationPromptDismissed() {
-    mSaveKeyIntentConfirmationInProgress = false;
-  }
+      return dialog;
+    }
 
-  /**
-   * Create dialog with supplied ids; icon is not set if iconId is 0.
-   */
-  private Dialog createOkAlertDialog(int titleId, int messageId, int iconId) {
-    return new AlertDialog.Builder(this)
-        .setTitle(titleId)
-        .setMessage(messageId)
-        .setIcon(iconId)
-        .setPositiveButton(R.string.ok, null)
-        .create();
+    private void markDialogAsResultOfSaveKeyIntent(Dialog dialog) {
+      dialog.setOnDismissListener(new OnDismissListener() {
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+          onSaveKeyIntentConfirmationPromptDismissed();
+        }
+      });
+    }
+
+    /**
+     * Invoked when a user-visible confirmation prompt for the Intent to add a new account has been
+     * dimissed.
+     */
+    private void onSaveKeyIntentConfirmationPromptDismissed() {
+      mSaveKeyIntentConfirmationInProgress = false;
+    }
+
+    /**
+     * Create dialog with supplied ids; icon is not set if iconId is 0.
+     */
+    private Dialog createOkAlertDialog(int titleId, int messageId, int iconId) {
+      return new AlertDialog.Builder(getActivity())
+              .setTitle(titleId)
+              .setMessage(messageId)
+              .setIcon(iconId)
+              .setPositiveButton(R.string.ok, null)
+              .create();
+    }
+
+
+    /**
+     * Saves the secret key to local storage on the phone and updates the displayed account list.
+     *
+     * @param user the user email address. When editing, the new user email.
+     * @param secret the secret key
+     * @param originalUser If editing, the original user email, otherwise null.
+     * @param type hotp vs totp
+     * @param counter only important for the hotp type
+     */
+    private void saveSecretAndRefreshUserList(String user, String secret,
+                                              String originalUser, OtpType type, Integer counter) {
+      if (saveSecret(getActivity(), user, secret, originalUser, type, counter)) {
+        new AuthenticatorActivity().refreshUserList(true);
+      }
+    }
   }
 
   /**
@@ -1170,6 +1197,7 @@ public class AuthenticatorActivity extends TestableActivity {
     }
   }
 
+  /**
   private void importDataFromOldAppIfNecessary() {
     if (mDataImportInProgress) {
       return;
@@ -1208,6 +1236,7 @@ public class AuthenticatorActivity extends TestableActivity {
       }
     });
   }
+   **/
 
   /**
    * Parameters to the {@link AuthenticatorActivity#DIALOG_ID_SAVE_KEY} dialog.

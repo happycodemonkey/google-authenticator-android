@@ -24,7 +24,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import com.google.android.apps.authenticator.AccountDb.OtpType;
 import com.google.android.apps.authenticator.dataimport.ImportController;
-import com.google.android.apps.authenticator.howitworks.IntroEnterPasswordActivity;
 import com.google.android.apps.authenticator.testability.DependencyInjector;
 import com.google.android.apps.authenticator.testability.StartActivityListener;
 import com.google.android.apps.authenticator2.R;
@@ -35,7 +34,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.ViewAsserts;
-import android.text.ClipboardManager;
+import android.content.ClipboardManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -61,7 +60,7 @@ public class AuthenticatorActivityTest extends
   @Mock private ImportController mMockDataImportController;
 
   public AuthenticatorActivityTest() {
-    super(TestUtilities.APP_PACKAGE_NAME, AuthenticatorActivity.class);
+    super(AuthenticatorActivity.class);
   }
 
   @Override
@@ -96,21 +95,18 @@ public class AuthenticatorActivityTest extends
     getActivity();
     ListView userList = (ListView) getActivity().findViewById(R.id.user_list);
     TextView enterPinPrompt = (TextView) getActivity().findViewById(R.id.enter_pin_prompt);
-    Button howItWorksButton = (Button) getActivity().findViewById(R.id.how_it_works_button);
     Button addAccountButton = (Button) getActivity().findViewById(R.id.add_account_button);
     View contentWhenNoAccounts = getActivity().findViewById(R.id.content_no_accounts);
 
     // check existence of fields
     assertNotNull(userList);
     assertNotNull(enterPinPrompt);
-    assertNotNull(howItWorksButton);
     assertNotNull(addAccountButton);
     assertNotNull(contentWhenNoAccounts);
 
     // check visibility
     View origin = getActivity().getWindow().getDecorView();
     ViewAsserts.assertOnScreen(origin, enterPinPrompt);
-    ViewAsserts.assertOnScreen(origin, howItWorksButton);
     ViewAsserts.assertOnScreen(origin, addAccountButton);
     ViewAsserts.assertOnScreen(origin, contentWhenNoAccounts);
     assertFalse(userList.isShown());
@@ -258,6 +254,10 @@ public class AuthenticatorActivityTest extends
     assertEquals("newname@gmail.com", accountNames.get(0));
   }
 
+  /** TODO
+   * This needs fixed
+   * @throws Exception
+   */
   public void testContextMenuCopyToClipboard() throws Exception {
     // use HOTP to avoid any timing issues when "current" pin is compared with clip board text.
     mAccountDb.update(
@@ -278,7 +278,7 @@ public class AuthenticatorActivityTest extends
     Context context = getInstrumentation().getTargetContext();
     ClipboardManager clipboard =
         (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-    assertEquals(pin, clipboard.getText());
+    assertEquals(pin, clipboard.getPrimaryClip());
   }
 
   ///////////////////////////   Options Menu Tests  /////////////////////////////
@@ -289,18 +289,6 @@ public class AuthenticatorActivityTest extends
     Intent launchIntent = TestUtilities.verifyWithTimeoutThatStartActivityAttemptedExactlyOnce();
     assertEquals(new ComponentName(getInstrumentation().getTargetContext(), cls),
         launchIntent.getComponent());
-  }
-
-  public void testOptionsMenuHowItWorks() throws Exception {
-    checkOptionsMenuItemWithComponent(R.id.how_it_works, IntroEnterPasswordActivity.class);
-  }
-
-  public void testOptionsMenuAddAccount() throws Exception {
-    checkOptionsMenuItemWithComponent(R.id.add_account, AddOtherAccountActivity.class);
-  }
-
-  public void testOptionsMenuSettings() throws Exception {
-    checkOptionsMenuItemWithComponent(R.id.settings, SettingsActivity.class);
   }
 
   public void testIntentActionScanBarcode_withScannerInstalled() throws Exception {
@@ -344,9 +332,6 @@ public class AuthenticatorActivityTest extends
     assertNotNull(listener);
     invokeDataImportListenerOnOldAppUninstallSuggestedOnMainThread(listener, new Intent());
     invokeDataImportListenerFinishedOnMainThread(listener);
-
-    TestUtilities.assertDialogWasDisplayed(
-        getActivity(), AuthenticatorActivity.DIALOG_ID_UNINSTALL_OLD_APP);
   }
 
   public void testImportControllerDataImportedDoesNotBlowUp() {

@@ -20,6 +20,7 @@ import com.google.android.apps.authenticator.testability.TestablePreferenceActiv
 import com.google.android.apps.authenticator2.R;
 
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 
 /**
  * Activity that displays the "Time correction" preferences.
@@ -31,7 +32,15 @@ public class SettingsTimeCorrectionActivity extends TestablePreferenceActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsTimeCorrectionFragment()).commit();
+  }
 
-    addPreferencesFromResource(R.xml.preferences_time_correction);
+  public static class SettingsTimeCorrectionFragment extends PreferenceFragment {
+
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      addPreferencesFromResource(R.xml.preferences_time_correction);
+    }
   }
 }
