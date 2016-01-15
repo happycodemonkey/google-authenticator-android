@@ -68,7 +68,6 @@ public class EnterKeyActivityTest extends ActivityInstrumentationTestCase2<Enter
     mActivity = getActivity();
     mAccountName = (EditText) mActivity.findViewById(R.id.account_name);
     mKeyEntryField = (EditText) mActivity.findViewById(R.id.key_value);
-    mType = (Spinner) mActivity.findViewById(R.id.type_choice);
     mSubmitButton = (Button) mActivity.findViewById(R.id.button_right);
   }
 

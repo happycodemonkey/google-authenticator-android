@@ -390,6 +390,7 @@ public class TestUtilities {
    * consecutive invocation of this method for the same dialog ID will fail unless the dialog
    * was displayed again prior to the invocation of this method.
    */
+  /**
   public static void assertDialogWasDisplayed(Activity activity, int dialogId) {
     // IMPLEMENTATION NOTE: This code below relies on the fact that, if a dialog with the ID was
     // every displayed, then dismissDialog will succeed, whereas if the dialog with the ID has
@@ -402,6 +403,7 @@ public class TestUtilities {
       Assert.fail("No dialog with ID " + dialogId + " was ever displayed");
     }
   }
+   **/
 
   /**
    * Taps the positive button of a currently displayed dialog. This method assumes that a button

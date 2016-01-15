@@ -170,13 +170,13 @@ public class AuthenticatorActivity extends TestableActivity {
    * error-prone mechanism because showDialog on Eclair doesn't take parameters. Once Froyo is
    * the minimum targetted SDK, this contrived code can be removed.
    */
-  private SaveKeyDialogParams mSaveKeyDialogParams;
+  private static SaveKeyDialogParams mSaveKeyDialogParams;
 
   /**
    * Whether this activity is currently displaying a confirmation prompt in response to the
    * "save key" Intent.
    */
-  private boolean mSaveKeyIntentConfirmationInProgress;
+  private static boolean mSaveKeyIntentConfirmationInProgress;
 
   private static final String OTP_SCHEME = "otpauth";
   private static final String TOTP = "totp"; // time-based
@@ -217,11 +217,11 @@ public class AuthenticatorActivity extends TestableActivity {
    // if (savedState != null) {
      // mUsers = (PinInfo[]) savedState;
       // Re-enable the Get Code buttons on all HOTP accounts, otherwise they'll stay disabled.
-      for (PinInfo account : mUsers) {
-        if (account.isHotp) {
-          account.hotpCodeGenerationAllowed = true;
-        }
-      }
+     // for (PinInfo account : mUsers) {
+    //    if (account.isHotp) {
+    //      account.hotpCodeGenerationAllowed = true;
+    //    }
+     // }
     //}
 
     if (savedInstanceState != null) {
@@ -412,6 +412,12 @@ public class AuthenticatorActivity extends TestableActivity {
   // @VisibleForTesting
   public void refreshUserList(boolean isAccountModified) {
     ArrayList<String> usernames = new ArrayList<String>();
+
+    // ?? not sure what's going wrong here, but it's null in tests
+    if (mAccountDb == null) {
+      mAccountDb = DependencyInjector.getAccountDb();
+    }
+
     mAccountDb.getNames(usernames);
 
     int userCount = usernames.size();
@@ -887,8 +893,8 @@ public class AuthenticatorActivity extends TestableActivity {
 
   public static class Dialogs extends DialogFragment {
 
-    private SaveKeyDialogParams mSaveKeyDialogParams;
-    private boolean mSaveKeyIntentConfirmationInProgress;
+    //private SaveKeyDialogParams mSaveKeyDialogParams;
+    //private boolean mSaveKeyIntentConfirmationInProgress;
 
     public static Dialogs newInstance(int id) {
       Dialogs d = new Dialogs();
@@ -956,30 +962,33 @@ public class AuthenticatorActivity extends TestableActivity {
                           })
                   .setNegativeButton(R.string.cancel, null)
                   .create();
+
+          onSaveKeyIntentConfirmationPromptDismissed();
+
           // Ensure that whenever this dialog is to be displayed via showDialog, it displays the
           // correct (latest) user/account name. If this dialog is not explicitly removed after it's
           // been dismissed, then next time showDialog is invoked, onCreateDialog will not be invoked
           // and the dialog will display the previous user/account name instead of the current one.
-          dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-              //removeDialog(id);
-              dismiss();
-              onSaveKeyIntentConfirmationPromptDismissed();
-            }
-          });
+         // dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+         //   @Override
+         //   public void onDismiss(DialogInterface dialog) {
+          //    //removeDialog(id);
+          //    dismiss();
+            //  onSaveKeyIntentConfirmationPromptDismissed();
+          //  }
+          //});
           break;
 
         case Utilities.INVALID_QR_CODE:
           dialog = createOkAlertDialog(R.string.error_title, R.string.error_qr,
                   android.R.drawable.ic_dialog_alert);
-          markDialogAsResultOfSaveKeyIntent(dialog);
+          //markDialogAsResultOfSaveKeyIntent(dialog);
           break;
 
         case Utilities.INVALID_SECRET_IN_QR_CODE:
           dialog = createOkAlertDialog(
                   R.string.error_title, R.string.error_uri, android.R.drawable.ic_dialog_alert);
-          markDialogAsResultOfSaveKeyIntent(dialog);
+          //markDialogAsResultOfSaveKeyIntent(dialog);
           break;
         default:
           break;
@@ -988,6 +997,7 @@ public class AuthenticatorActivity extends TestableActivity {
       return dialog;
     }
 
+    /**
     private void markDialogAsResultOfSaveKeyIntent(Dialog dialog) {
       dialog.setOnDismissListener(new OnDismissListener() {
         @Override
@@ -996,6 +1006,7 @@ public class AuthenticatorActivity extends TestableActivity {
         }
       });
     }
+     **/
 
     /**
      * Invoked when a user-visible confirmation prompt for the Intent to add a new account has been
@@ -1013,7 +1024,12 @@ public class AuthenticatorActivity extends TestableActivity {
               .setTitle(titleId)
               .setMessage(messageId)
               .setIcon(iconId)
-              .setPositiveButton(R.string.ok, null)
+              .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                  onSaveKeyIntentConfirmationPromptDismissed();
+                }
+              })
               .create();
     }
 
