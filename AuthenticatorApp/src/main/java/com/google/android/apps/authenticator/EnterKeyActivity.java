@@ -21,12 +21,14 @@ import com.google.android.apps.authenticator.Base32String.DecodingException;
 import com.google.android.apps.authenticator.wizard.WizardPageActivity;
 import com.google.android.apps.authenticator2.R;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.io.Serializable;
 
@@ -53,6 +55,12 @@ public class EnterKeyActivity extends WizardPageActivity<Serializable> implement
     // Find all the views on the page
     mKeyEntryField = (EditText) findViewById(R.id.key_value);
     mAccountName = (EditText) findViewById(R.id.account_name);
+
+    getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+    getActionBar().setCustomView(R.layout.action_bar_layout);
+
+    TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
+    actionBarTitle.setText(R.string.enter_key_title);
 
     // Set listeners
     mKeyEntryField.addTextChangedListener(this);

@@ -19,9 +19,11 @@ package com.google.android.apps.authenticator;
 import com.google.android.apps.authenticator.wizard.WizardPageActivity;
 import com.google.android.apps.authenticator2.R;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.Serializable;
 
@@ -39,26 +41,20 @@ public class AddOtherAccountActivity extends WizardPageActivity<Serializable> {
 
     setPageContentView(R.layout.add_other_account);
 
+    getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+    getActionBar().setCustomView(R.layout.action_bar_layout);
+
+    TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
+    actionBarTitle.setText(R.string.add_account_menu_item);
+
     findViewById(R.id.scan_barcode).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         scanBarcode();
       }
     });
-    findViewById(R.id.manually_add_account).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        manuallyEnterAccountDetails();
-      }
-    });
 
     mRightButton.setVisibility(View.INVISIBLE);
-  }
-
-  private void manuallyEnterAccountDetails() {
-    Intent intent = new Intent(Intent.ACTION_VIEW);
-    intent.setClass(this, EnterKeyActivity.class);
-    startActivity(intent);
   }
 
   private void scanBarcode() {

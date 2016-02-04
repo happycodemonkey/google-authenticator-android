@@ -22,6 +22,7 @@ import com.google.android.apps.authenticator.testability.DependencyInjector;
 import com.google.android.apps.authenticator.testability.TestableActivity;
 import com.google.android.apps.authenticator2.R;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -57,6 +58,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -111,7 +113,7 @@ public class AuthenticatorActivity extends TestableActivity {
 
   private View mContentNoAccounts;
   private View mContentAccountsPresent;
-  private TextView mEnterPinPrompt;
+  //private TextView mEnterPinPrompt;
   private ListView mUserList;
   private PinListAdapter mUserAdapter;
   private PinInfo[] mUsers = {};
@@ -236,13 +238,47 @@ public class AuthenticatorActivity extends TestableActivity {
     mContentNoAccounts.setVisibility((mUsers.length > 0) ? View.GONE : View.VISIBLE);
     mContentAccountsPresent.setVisibility((mUsers.length > 0) ? View.VISIBLE : View.GONE);
 
-    findViewById(R.id.add_account_button).setOnClickListener(new View.OnClickListener() {
+    Button addAccount = (Button) findViewById(R.id.add_account_button);
+    addAccount.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            scanBarcode();
+        }
+    });
+    addAccount.setTypeface(Typefaces.get(getApplicationContext(), Typefaces.FONTAWESOME));
+
+      TextView addAccountHeader = (TextView) findViewById(R.id.add_account_header);
+      addAccountHeader.setTypeface(Typefaces.get(getApplicationContext(), Typefaces.FONTAWESOME));
+      TextView addAccountPrompt = (TextView) findViewById(R.id.add_account_prompt);
+      addAccountPrompt.setTypeface(Typefaces.get(getApplicationContext(), Typefaces.FONTAWESOME));
+
+      Button deleteAccount = (Button) findViewById(R.id.delete_button);
+    deleteAccount.setOnClickListener(new View.OnClickListener() {
+
       @Override
       public void onClick(View v) {
-        addAccount();
+        deleteToken();
       }
     });
-    mEnterPinPrompt = (TextView) findViewById(R.id.enter_pin_prompt);
+      deleteAccount.setTypeface(Typefaces.get(getApplicationContext(), Typefaces.FONTAWESOME));
+
+      getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+      getActionBar().setCustomView(R.layout.action_bar_layout);
+
+    Button helpButton = (Button) findViewById(R.id.help_button);
+    helpButton.setTypeface(Typefaces.get(getApplicationContext(), Typefaces.FONTAWESOME));
+
+    final Intent helpIntent = new Intent(this, HelpActivity.class);
+
+    helpButton.setOnClickListener(new View.OnClickListener() {
+
+      @Override
+      public void onClick(View v) {
+        startActivity(helpIntent);
+      }
+    });
+
+   // mEnterPinPrompt = (TextView) findViewById(R.id.enter_pin_prompt);
 
     mUserAdapter = new PinListAdapter(this, R.layout.user_row, mUsers);
 
@@ -631,7 +667,6 @@ public class AuthenticatorActivity extends TestableActivity {
       refreshUserList(true);
     }
   }
-
   /**
    * Saves the secret key to local storage on the phone.
    *
@@ -688,6 +723,48 @@ public class AuthenticatorActivity extends TestableActivity {
     menu.add(0, REMOVE_ID, 0, R.string.context_menu_remove_account);
   }
 
+  private boolean deleteToken() {
+
+    if (mUsers.length > 0) {
+
+      // cheating here because there is only ONE account token
+      final String user = mUsers[0].user;
+
+      View promptContentView =
+              getLayoutInflater().inflate(R.layout.remove_account_prompt, null, false);
+      WebView webView = (WebView) promptContentView.findViewById(R.id.web_view);
+      webView.setBackgroundColor(Color.TRANSPARENT);
+
+      Utilities.setWebViewHtml(
+              webView,
+              "<html><body style=\"background-color: transparent;\" text=\"white\">"
+                      + getString(
+                      mAccountDb.isGoogleAccount(user)
+                              ? R.string.remove_google_account_dialog_message
+                              : R.string.remove_account_dialog_message)
+                      + "</body></html>");
+
+      new AlertDialog.Builder(this)
+              .setTitle(getString(R.string.remove_account_dialog_title, user))
+              .setView(promptContentView)
+              .setIcon(android.R.drawable.ic_dialog_alert)
+              .setPositiveButton(R.string.remove_account_dialog_button_remove,
+                      new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                          mAccountDb.delete(user);
+                          refreshUserList(true);
+                        }
+                      }
+              )
+              .setNegativeButton(R.string.cancel, null)
+              .show();
+    } else {
+      // TODO probably do some pop up or some bullshit here? IDK
+    }
+    return true;
+  }
+
   @Override
   public boolean onContextItemSelected(MenuItem item) {
     AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
@@ -729,8 +806,8 @@ public class AuthenticatorActivity extends TestableActivity {
         double pixelsPerDip =
             TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()) / 10d;
-        webView.getSettings().setDefaultFontSize(
-            (int) (mEnterPinPrompt.getTextSize() / pixelsPerDip));
+       // webView.getSettings().setDefaultFontSize(
+        //    (int) (mEnterPinPrompt.getTextSize() / pixelsPerDip));
         Utilities.setWebViewHtml(
             webView,
             "<html><body style=\"background-color: transparent;\" text=\"white\">"
@@ -1177,7 +1254,7 @@ public class AuthenticatorActivity extends TestableActivity {
        row = inflater.inflate(R.layout.user_row, null);
      }
      TextView pinView = (TextView) row.findViewById(R.id.pin_value);
-     TextView userView = (TextView) row.findViewById(R.id.current_user);
+     //TextView userView = (TextView) row.findViewById(R.id.current_user);
      View buttonView = row.findViewById(R.id.next_otp);
      CountdownIndicator countdownIndicator =
          (CountdownIndicator) row.findViewById(R.id.countdown_icon);
@@ -1207,7 +1284,7 @@ public class AuthenticatorActivity extends TestableActivity {
        pinView.setTextScaleX(PIN_TEXT_SCALEX_NORMAL);
      }
      pinView.setText(currentPin.pin);
-     userView.setText(currentPin.user);
+     //userView.setText(currentPin.user);
 
      return row;
     }

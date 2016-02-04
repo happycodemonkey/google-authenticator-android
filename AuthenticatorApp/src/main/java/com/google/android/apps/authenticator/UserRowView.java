@@ -55,8 +55,8 @@ public class UserRowView extends LinearLayout {
             message = message + pinText.charAt(i) + " ";
         }
     }
-    CharSequence userText = ((TextView) findViewById(R.id.current_user)).getText();
-    message = message + " " + userText;
+    //CharSequence userText = ((TextView) findViewById(R.id.current_user)).getText();
+    //message = message + " " + userText;
     accessEvent.setClassName(getClass().getName());
     accessEvent.setPackageName(ctx.getPackageName());
     accessEvent.getText().add(message);

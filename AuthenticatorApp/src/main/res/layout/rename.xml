@@ -14,12 +14,15 @@
      limitations under the License.
 -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/rename_root"
-  android:layout_width="fill_parent" android:layout_height="wrap_content" >
+<FrameLayout android:id="@+id/rename_root"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
 
-  <EditText android:id="@+id/rename_edittext"
-      android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:singleLine="true" />
+    <EditText
+        android:id="@+id/rename_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"/>
 
 </FrameLayout>
