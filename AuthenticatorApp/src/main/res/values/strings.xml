@@ -22,15 +22,22 @@
 
   <string name="help">HELP</string>
 
-  <string name="help_text">Taxidermy pinterest lo-fi polaroid yuccie. Hoodie deep v blog,
-    fashion axe blue bottle next level actually kitsch bushwick fingerstache typewriter small batch 8-bit lo-fi.
-    Poutine gastropub bespoke YOLO, plaid williamsburg twee jean shorts freegan aesthetic organic master cleanse echo park cliche.
+  <string name="help_text">Thank you for downloading the TACC User Portal Authenticator.
 \n\n
-
-    Beard tattooed intelligentsia asymmetrical XOXO literally. Pabst mustache irony, normcore single-origin coffee fixie church-key ugh retro messenger
-    bag slow-carb chambray knausgaard 3 wolf moon.
+In order to use the Authenticator, you will need to pair your device with the TACC User Portal as follows:
 \n\n
-    Narwhal chillwave small batch, cray cred kickstarter XOXO. Next level biodiesel letterpress pickled.
+* Log into the TACC User Portal at https://portal.tacc.utexas.edu on another computer.
+    \n\n
+* Navigate to https://portal.tacc.utexas.edu/account-profile/mfa/-/mfa/pairing. A QR code will be generated for you here. Tap the + icon on the Authenticator app home screen,
+    and point your device camera at the QR code. The application may prompt you to install a QR code scanner if you don’t already have one;
+    follow the directions for installing the QR code scanner and come back to the Authenticator app. The Authenticator app will read the QR code and
+    display a token in numerical digits. This token expires whenever the spinning circle icon loses all of its blue color.
+    \n\n
+* Enter a token on https://portal.tacc.utexas.edu/account-profile/mfa/-/mfa/pairing to finish pairing your device.
+    \n\n
+* If you want to unpair your device, you MUST first do this via the TACC User Portal; deleting your account in the Authenticator app will prevent you from being able to log in anywhere that requires a token.
+    \n\n
+* If you need further assistance please file a ticket with us at https://portal.tacc.utexas.edu/tacc-consulting/-/consult/tickets/create.
   </string>
 
   <!-- Name of the application -->

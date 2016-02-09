@@ -5,25 +5,9 @@ android {
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "com.google.android.apps.authenticator2"
+        applicationId "edu.utexas.tacc.authenticator"
         minSdkVersion 11
         targetSdkVersion 22
-
-        testApplicationId "com.google.android.apps.authenticator2.tests"
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
-    }
-
-    productFlavors {
-        playStore {
-        }
-        openSource {
-            applicationId "com.google.android.apps.authenticator2.os"
-            testApplicationId "com.google.android.apps.authenticator2.tests.os"
-        }
-        openSourceDev {
-            applicationId "com.google.android.apps.authenticator2.osdev"
-            testApplicationId "com.google.android.apps.authenticator2.tests.osdev"
-        }
     }
 
     buildTypes {
@@ -43,3 +27,8 @@ android {
         androidTestCompile "com.google.dexmaker:dexmaker-mockito:1.2"
     }
 }
+dependencies {
+    compile 'com.google.android.gms:play-services-analytics:8.4.0'
+}
+
+apply plugin: 'com.google.gms.google-services'

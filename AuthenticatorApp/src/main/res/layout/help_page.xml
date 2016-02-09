@@ -12,5 +12,6 @@
         android:textColor="@color/black"
         android:id="@+id/textView"
         android:layout_margin="10dp"
+        android:autoLink="all"
         android:layout_gravity="center"/>
 </LinearLayout>

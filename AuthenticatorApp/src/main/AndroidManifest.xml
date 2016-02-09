@@ -14,73 +14,79 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<manifest package="com.google.android.apps.authenticator2"
-          xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="21"
-          android:versionName="2.21">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.google.android.tacc.authenticator2"
+    android:versionCode="21"
+    android:versionName="2.21" >
 
     <uses-sdk
         android:minSdkVersion="11"
-        android:targetSdkVersion="18"/>
+        android:targetSdkVersion="18" />
 
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <!--
   NOTE: android:allowBackup is set to false below to prevent the key material from being extracted
   from the device using various backup methods (e.g., adb backup introduced in ICS).
     -->
     <application
-        android:name="com.google.android.apps.authenticator.AuthenticatorApplication"
+        android:name="edu.utexas.tacc.authenticator.AuthenticatorApplication"
         android:allowBackup="false"
         android:icon="@drawable/app_icon"
         android:label="@string/app_name_short"
-        android:theme="@style/AuthenticatorTheme">
+        android:theme="@style/AuthenticatorTheme" >
         <activity
-            android:name="com.google.android.apps.authenticator.AuthenticatorActivity"
+            android:name="edu.utexas.tacc.authenticator.AuthenticatorActivity"
             android:label="@string/app_name_short"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="otpauth"/>
+                <data android:scheme="otpauth" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.google.android.apps.authenticator.AddOtherAccountActivity"
-            android:label="@string/add_account_menu_item"/>
+            android:name="edu.utexas.tacc.authenticator.AddOtherAccountActivity"
+            android:label="@string/add_account_menu_item" />
         <activity
-            android:name="com.google.android.apps.authenticator.EnterKeyActivity"
-            android:label="@string/enter_key_title"/>
+            android:name="edu.utexas.tacc.authenticator.EnterKeyActivity"
+            android:label="@string/enter_key_title" />
         <activity
-            android:name="com.google.android.apps.authenticator.CheckCodeActivity"
-            android:label="@string/check_code_title"/>
+            android:name="edu.utexas.tacc.authenticator.CheckCodeActivity"
+            android:label="@string/check_code_title" />
         <activity
-            android:name="com.google.android.apps.authenticator.timesync.SettingsTimeCorrectionActivity"
-            android:label="@string/timesync_preference_screen_title"/>
+            android:name="edu.utexas.tacc.authenticator.timesync.SettingsTimeCorrectionActivity"
+            android:label="@string/timesync_preference_screen_title" />
         <activity
-            android:name="com.google.android.apps.authenticator.timesync.AboutActivity"
+            android:name="edu.utexas.tacc.authenticator.timesync.AboutActivity"
             android:label="@string/timesync_about_feature_screen_title"
-            android:theme="@style/AuthenticatorTheme.NoTitleBar"/>
+            android:theme="@style/AuthenticatorTheme.NoTitleBar" />
         <activity
-            android:name="com.google.android.apps.authenticator.timesync.SyncNowActivity"
+            android:name="edu.utexas.tacc.authenticator.timesync.SyncNowActivity"
             android:label="@string/timesync_sync_now_screen_title"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
-            android:name="com.google.android.apps.authenticator.HelpActivity"
-            android:label="@string/title_activity_help">
+            android:name="edu.utexas.tacc.authenticator.HelpActivity"
+            android:label="@string/title_activity_help" >
         </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

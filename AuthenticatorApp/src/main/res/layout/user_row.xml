@@ -42,7 +42,7 @@ with user_row_legacy.xml -->
         android:layout_marginRight="20dip"
         android:orientation="horizontal">-->
 
-<com.google.android.apps.authenticator.UserRowView xmlns:android="http://schemas.android.com/apk/res/android"
+<edu.utexas.tacc.authenticator.UserRowView xmlns:android="http://schemas.android.com/apk/res/android"
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
                                                    android:orientation="vertical">
@@ -78,7 +78,7 @@ with user_row_legacy.xml -->
             android:gravity="center"
             android:src="@drawable/refresh_button"/>
 
-        <com.google.android.apps.authenticator.CountdownIndicator
+        <edu.utexas.tacc.authenticator.CountdownIndicator
             android:id="@+id/countdown_icon"
             style="?attr/accountListWithVerificationCodesRowCountdownIndicator"
             android:layout_width="100dip"
@@ -89,4 +89,4 @@ with user_row_legacy.xml -->
     </LinearLayout>
     <!--    </LinearLayout>-->
 
-</com.google.android.apps.authenticator.UserRowView>
+</edu.utexas.tacc.authenticator.UserRowView>
